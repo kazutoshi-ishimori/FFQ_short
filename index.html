@@ -15,10 +15,17 @@
       $("#ffqnSurveyData").on("submit", function (e) {
         e.preventDefault(); // フォームの本来の送信を停止
 
-        // CSVとして保存するか確認
-        if (!confirm("入力内容をCSVファイルとして保存します。よろしいですか？")) {
+        // パイセンが設定したGASのURL
+        const gasUrl = "https://script.google.com/macros/s/AKfycbx7p2QR34UtpYdpz0XmUg0UIn0Elwc039QhZNxGNcp9OjJUBOa50qtK5ftsAKxjhrxd/exec";
+
+        // 送信していいか確認しちゃう
+        if (!confirm("入力内容を送信します。マジでいい？")) {
           return;
         }
+
+        // ボタンを無効化して、二重送信を防ぐ
+        const submitButton = $(this).find('button[type="submit"]');
+        submitButton.prop('disabled', true).text('送信中...');
 
         // フォームデータを名前をキーにしたオブジェクトに変換
         const formArray = $(this).serializeArray();
@@ -27,7 +34,7 @@
             return obj;
         }, {});
 
-        // 指定されたヘッダーリスト
+        // ヘッダーリスト（スプレッドシートのカラム名と合わせる）
         const targetHeaders = ["調査票種別", "ID", "名前", "ふりがな", "現住所", "電話番号", "回答日", "性別", "妊娠・授乳等", "年齢", "身長", "体重", "飲酒", "禁酒年齢", "禁酒理由", "飲酒頻度", "日本酒", "焼酎", "ビール", "ウィスキー", "ワイン", "その他酒種類", "その他酒量", "5年以内食習慣変化", "食習慣変化理由（病気）", "食習慣変化理由（検査異常）", "食習慣変化理由（健康）", "食習慣変化理由（好み変化）", "食習慣変化理由（その他）", "食習慣変化理由（その他）", "食べ過ぎる", "食べる速さ", "朝食", "外食", "インスタント食品", "炒め物", "揚げ物", "あぶら身", "めんの汁", "調味塩", "醤油", "調理油", "肉調理法", "魚介調理法", "野菜調理法", "肉焼き具合", "焼き魚", "魚焦げ", "料理好み（こってり）", "料理好み（からい味）", "料理好み（塩加減の濃い味）", "料理好み（すっぱい味）", "料理好み（甘いもの）", "料理好み（熱いもの）", "茶碗", "米飯杯数", "玄米割合", "麦", "アワヒエ", "みそ汁頻度", "みそ汁杯数", "みそ汁味付", "牛ステーキ頻", "牛焼き物頻", "牛炒め物頻", "牛煮込み頻", "豚炒め物頻", "豚揚げ物頻", "豚煮込み頻", "豚煮物頻", "豚汁物頻", "豚レバー頻", "牛ステーキ量", "牛焼き物量", "牛炒め物量", "牛煮込み量", "豚炒め物量", "豚揚げ物量", "豚煮込み量", "豚煮物量", "豚汁物量", "豚レバー量", "鳥焼き物頻", "鳥炒め物頻", "鳥煮物頻", "鳥揚げ物頻", "鳥レバー頻", "ロースハム頻", "ウィンナー頻", "ベーコン頻", "ランチョンミート頻", "低脂肪乳頻", "普通乳頻", "卵頻", "チーズ頻", "ヨーグルト頻", "鳥焼き物量", "鳥炒め物量", "鳥煮物量", "鳥揚げ物量", "鳥レバー量", "ロースハム量", "ウィンナー量", "ベーコン量", "ランチョンミート量", "低脂肪乳量", "普通乳量", "卵量", "チーズ量", "ヨーグルト量", "塩たら・塩ほっけ・塩さけ頻", "干物頻", "マグロ缶詰頻", "さけ頻", "かつお頻", "ぶり頻", "たら頻", "たい頻", "あじ頻", "さんま頻", "しらす頻", "たらこ・すじこ・(いくら)頻", "うなぎ頻", "いか頻", "たこ頻", "えび頻", "あさり頻", "たにし頻", "ちくわ頻", "かまぼこ頻", "さつま揚げ頻", "塩たら・塩ほっけ・塩さけ量", "干物量", "マグロ缶詰量", "さけ量", "かつお量", "ぶり量", "たら量", "たい量", "あじ量", "さんま量", "しらす量", "たらこ・すじこ・(いくら)量", "うなぎ量", "いか量", "たこ量", "えび量", "あさり量", "たにし量", "ちくわ量", "かまぼこ量", "さつま揚げ量", "にんじん頻", "ホウレンソウ頻", "かぼちゃ頻", "きゃべつ頻", "だいこん頻", "にんじん量", "ホウレンソウ量", "かぼちゃ量", "きゃべつ量", "だいこん量", "漬タクワン頻", "漬緑の葉頻", "漬ウメボシ頻", "漬ハクサイ頻", "漬キュウリ頻", "漬なす頻", "漬かぶ頻", "ピーマン頻", "トマト頻", "長ねぎ頻", "青ねぎわけぎ頻", "にら頻", "春菊頻", "こまつな頻", "ブロッコリー頻", "たまねぎ頻", "きゅうり頻", "なす頻", "はくさい頻", "ごぼう頻", "もやし頻", "サヤインゲン頻", "レタス頻", "ｱｽﾊﾟﾗｶﾞｽ頻", "にんにく頻", "チンゲンサイ頻", "からしな頻", "にがうり頻", "フダンソウ頻", "漬タクワン量", "漬緑の葉量", "漬ウメボシ量", "漬ハクサイ量", "漬キュウリ量", "漬なす量", "漬かぶ量", "ピーマン量", "トマト量", "長ねぎ量", "青ねぎわけぎ量", "にら量", "春菊量", "こまつな量", "ブロッコリー量", "たまねぎ量", "きゅうり量", "なす量", "はくさい量", "ごぼう量", "もやし量", "サヤインゲン量", "レタス量", "ｱｽﾊﾟﾗｶﾞｽ量", "にんにく量", "チンゲンサイ量", "からしな量", "にがうり量", "フダンソウ量", "へちま頻", "よもぎ頻", "パパイヤ頻", "みかん頻", "柑橘類頻", "りんご頻", "かき頻", "いちご頻", "ぶどう頻", "メロン頻", "すいか頻", "もも頻", "なし頻", "キウィ頻", "パイン頻", "バナナ頻", "マンゴ頻", "へちま量", "よもぎ量", "パパイヤ量", "みかん量", "柑橘類量", "りんご量", "かき量", "いちご量", "ぶどう量", "メロン量", "すいか量", "もも量", "なし量", "キウィ量", "パイン量", "バナナ量", "マンゴ量", "パン頻", "うどん頻", "そば頻", "沖縄そば頻", "ラーメン頻", "パスタ頻", "そうめん頻", "もち頻", "和菓子頻", "ケーキ頻", "ビスケット頻", "チョコレート頻", "アイスクリーム頻", "スナック菓頻", "せんべい頻", "ごま頻", "ピーナッツ頻", "パン量", "うどん量", "そば量", "沖縄そば量", "ラーメン量", "パスタ量", "そうめん量", "もち量", "和菓子量", "ケーキ量", "ビスケット量", "チョコレート量", "アイスクリーム量", "スナック菓量", "せんべい量", "ごま量", "ピーナッツ量", "とうふ頻", "湯豆腐頻", "ゆし豆腐頻", "高野豆腐頻", "生揚げ頻", "油揚げ頻", "納豆頻", "サツマイモ頻", "ジャガイモ頻", "さといも頻", "山芋長芋頻", "こんにゃく頻", "しいたけ頻", "えのき頻", "しめじ頻", "わかめ頻", "ひじき頻", "のり頻", "とうふ量", "湯豆腐量", "ゆし豆腐量", "高野豆腐量", "生揚げ量", "油揚げ量", "納豆量", "サツマイモ量", "ジャガイモ量", "さといも量", "山芋長芋量", "こんにゃく量", "しいたけ量", "えのき量", "しめじ量", "わかめ量", "ひじき量", "のり量", "バター頻", "マーガリン頻", "ジャム頻", "はちみつ頻", "ドレッシング頻", "マヨネーズ頻", "ソース頻", "ケチャップ頻", "からし頻", "わさび頻", "とうがらし頻", "しょうが頻", "きなこ頻", "バター量", "マーガリン量", "ジャム量", "はちみつ量", "ドレッシング量", "マヨネーズ量", "ソース量", "ケチャップ量", "からし量", "わさび量", "とうがらし量", "しょうが量", "きなこ量", "せん茶", "日本茶缶ボトル", "ウーロン茶", "ウーロン茶缶ボトル", "紅茶", "紅茶缶ボトル", "コーヒー（豆）", "インスタントコーヒー", "缶コーヒー", "トマトジュース", "野菜ジュース", "オレンジジュース", "リンゴジュース", "ｸﾞﾚｰﾌﾟﾌﾙｰﾂｼﾞｭｰｽ", "果汁飲料(100%でない)", "炭酸飲料", "豆乳", "ヤクルト", "水道水", "市販水", "紅茶砂糖", "紅茶ミルク", "コーヒー砂糖", "コーヒーミルク", "カフィインレス紅茶", "カフェインレスコーヒー"];
         
         // ヘッダーとフォームのname属性の対応表
@@ -64,8 +71,8 @@
             "りんご頻": "x90", "りんご量": "y90", "すいか頻": "x95", "すいか量": "y95",
             "バナナ頻": "x100", "バナナ量": "y100", "パン頻": "x102", "パン量": "y102",
             "うどん頻": "x103", "うどん量": "y103", "そば頻": "x104", "そば量": "y104",
-            "和菓子頻": "x108", "和菓子量": "y108", "みそ汁頻": "x113", "みそ汁量": "y113",
-            "とうふ頻": "x114", "とうふ量": "y114", "納豆頻": "x119", "納豆量": "y119", 
+            "和菓子頻": "x108", "和菓子量": "y108",
+            "とうふ頻": "x113", "とうふ量": "y113", "納豆頻": "x119", "納豆量": "y119", 
             "しいたけ頻": "x124", "しいたけ量": "y124", "わかめ頻": "x127", "わかめ量": "y127",
             "ひじき頻": "x128", "ひじき量": "y128",
             "せん茶": "x138", "日本茶缶ボトル": "x187", "コーヒー（豆）": "x142", "インスタントコーヒー": "x190",
@@ -73,117 +80,56 @@
             "豆乳": "x137", "水道水": "x151"
         };
         
-        const csvValues = targetHeaders.map(header => {
+        const dataToSend = {};
+
+        targetHeaders.forEach(header => {
             const formName = headerToFormNameMap[header];
             let value = "0"; // デフォルト値
 
             if (header === "電話番号") {
                 const telParts = [formData['tel1'], formData['tel2'], formData['tel3']];
-                if (telParts.some(p => p)) { // いずれかの項目に値がある場合のみ結合
-                    value = telParts.join('-');
-                } else {
-                    value = ""; // 全て空の場合は空文字にする
-                }
+                value = telParts.some(p => p) ? telParts.join('-') : "";
             } else if (header === "回答日") {
                 value = [formData['year'], formData['month'], formData['date']].join('/');
             } else if (formName && formData[formName] !== undefined) {
                 value = formData[formName];
             }
-            
-            // 値をダブルクォートで囲む（値自体にダブルクォートがあればエスケープ）
-            //return `"${(value || "").toString().replace(/"/g, '""')}"`;
-            
-            // 値をダブルクォートで囲まない
-            return value;
+            dataToSend[header] = value;
         });
-
-
-        // CSVのヘッダー行とデータ行を作成
-        const csvHeader = targetHeaders.join(",");
-        const csvData = csvValues.join(",");
-
-        // ヘッダーとデータを結合し、CSVコンテンツを作成
-        const csvContent = csvHeader + "\n" + csvData;
-
-        // CSVファイル用のBlobを生成（BOMを先頭に付与してExcelでの文字化けを防止）
-        const blob = new Blob(["\uFEFF" + csvContent], {
-          type: "text/csv;charset=utf-8;",
-        });
-
-        // ダウンロード用のリンクを一時的に作成
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-
-        // 氏名と日時を元にファイル名を生成
-        const now = new Date();
-        const personName = formData['name'] || ''; // 氏名を取得 (空の場合もある)
-        const timestamp = `${now.getFullYear()}${String(
-          now.getMonth() + 1
-        ).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}_${String(
-          now.getHours()
-        ).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}${String(
-          now.getSeconds()
-        ).padStart(2, "0")}`;
         
-        const fileName = `FFQ_NEXT_${personName}_${timestamp}.csv`;
+        // タイムスタンプを追加
+        dataToSend['タイムスタンプ'] = new Date().toLocaleString('ja-JP');
 
-        link.setAttribute("download", fileName);
-        link.style.visibility = "hidden";
-        document.body.appendChild(link);
-
-        // リンクをクリックしてダウンロードを実行
-        link.click();
-
-        // 一時的なリンクを削除
-        document.body.removeChild(link);
-
-        alert("CSVファイルが保存されました。");
+        // fetchでGASにPOST送信
+        fetch(gasUrl, {
+          method: "POST",
+          // GASでJSONを受け取るため、Content-Typeをtext/plainにしておくとクロスドメインでも安心
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+          },
+          body: JSON.stringify(dataToSend),
+          mode: "no-cors" // GitHub PagesからGASへ送るおまじない
+        })
+        .then(() => {
+            // no-corsモードだとレスポンスは受け取れないけど、送信はできてるはず！
+            alert("送信完了✨ パイセン、おつかれ！");
+            // フォームをリセットするとか、サンクスページに飛ばすとかもできるよ
+            // location.href = 'thanks.html';
+        })
+        .catch((error) => {
+            // 送信失敗
+            console.error("エラー発生:", error);
+            alert("あー、送信失敗しちゃった...。コンソール見てみて！");
+        })
+        .finally(() => {
+            // ボタンを元に戻す
+            submitButton.prop('disabled', false).text('送信');
+        });
       });
 
       $("input").on("change", function () {
         $(this).closest("fieldset").removeClass("error");
       });
-    });
-  </script>
-  <script>
-    document.getElementById('ffqnSurveyData').addEventListener('submit', async function (e) {
-      e.preventDefault();
-
-      const formData = new FormData(this);
-      const data = {};
-      formData.forEach((v, k) => {
-        // ラジオやチェックボックスの複数選択対応
-        if (data[k]) {
-          if (Array.isArray(data[k])) {
-            data[k].push(v);
-          } else {
-            data[k] = [data[k], v];
-          }
-        } else {
-          data[k] = v;
-        }
-      });
-
-      const endpoint = "https://script.google.com/macros/s/AKfycbx7p2QR34UtpYdpz0XmUg0UIn0Elwc039QhZNxGNcp9OjJUBOa50qtK5ftsAKxjhrxd/exec"; //★ここにGASのURL貼ってね★
-
-      try {
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        });
-
-        if (res.ok) {
-          alert("送信完了しました。ありがとうございました。");
-          this.reset(); // フォームリセット
-        } else {
-          alert("送信失敗しました。もう一度じっっこうしてください。");
-        }
-      } catch (err) {
-        console.error(err);
-        alert("エラー発生しました。インターネット接続を確認してください");
-      }
     });
   </script>
 </head>
@@ -194,7 +140,7 @@
       <h1 class="enquete-title"><span class="sub">食物摂取頻度調査票</span><br>FFQ NEXT<span class="ver">(短縮版)</span></h1>
     </div>
 
-    <form id="ffqnSurveyData" method="post" action="short_done.html" class="formStyle">
+    <form id="ffqnSurveyData" method="post" action="/np/ffqnext/short_done.html" class="formStyle">
   
     <input type="hidden" name="token" value="15e0333d-3627-4e7b-8dda-d388d5391122">
   	<input type="hidden" name="kind" value="2">
@@ -2187,7 +2133,7 @@
         入力もれがないか，もう一度たしかめてください。
       </div>
       <div class="send">
-        <button class="btn">CSV保存</button>
+        <button class="btn">送信</button>
       </div>
 
     </form>
