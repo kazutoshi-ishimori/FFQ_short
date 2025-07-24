@@ -19,7 +19,7 @@
         const gasUrl = "https://script.google.com/macros/s/AKfycbx7p2QR34UtpYdpz0XmUg0UIn0Elwc039QhZNxGNcp9OjJUBOa50qtK5ftsAKxjhrxd/exec";
 
         // 送信していいか確認しちゃう
-        if (!confirm("入力内容を送信します。マジでいい？")) {
+        if (!confirm("入力内容を送信します。よろしいですか？")) {
           return;
         }
 
@@ -112,14 +112,14 @@
         })
         .then(() => {
             // no-corsモードだとレスポンスは受け取れないけど、送信はできてるはず！
-            alert("送信完了✨ パイセン、おつかれ！");
+            alert("送信完了しました");
             // フォームをリセットするとか、サンクスページに飛ばすとかもできるよ
             // location.href = 'thanks.html';
         })
         .catch((error) => {
             // 送信失敗
             console.error("エラー発生:", error);
-            alert("あー、送信失敗しちゃった...。コンソール見てみて！");
+            alert("送信失敗...。コンソール確認してください。");
         })
         .finally(() => {
             // ボタンを元に戻す
