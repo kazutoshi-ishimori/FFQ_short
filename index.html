@@ -1,0 +1,2197 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>食物摂取頻度調査票 FFQ NEXT （短縮版）| 建帛社</title>
+  <link rel="stylesheet" href="style-short.css">
+  <script src="jquery.min.js"></script>
+  <script src="main.js" defer="defer"></script>
+  <script src="ffq_header_mapping.js"></script>
+  <script src="dateSelectbox.js" defer="defer"></script>
+  <script>
+    $(function () {
+      $("#ffqnSurveyData").on("submit", function (e) {
+        e.preventDefault(); // フォームの本来の送信を停止
+
+        // CSVとして保存するか確認
+        if (!confirm("入力内容をCSVファイルとして保存します。よろしいですか？")) {
+          return;
+        }
+
+        // フォームデータを名前をキーにしたオブジェクトに変換
+        const formArray = $(this).serializeArray();
+        const formData = formArray.reduce((obj, item) => {
+            obj[item.name] = item.value;
+            return obj;
+        }, {});
+
+        // 指定されたヘッダーリスト
+        const targetHeaders = ["調査票種別", "ID", "名前", "ふりがな", "現住所", "電話番号", "回答日", "性別", "妊娠・授乳等", "年齢", "身長", "体重", "飲酒", "禁酒年齢", "禁酒理由", "飲酒頻度", "日本酒", "焼酎", "ビール", "ウィスキー", "ワイン", "その他酒種類", "その他酒量", "5年以内食習慣変化", "食習慣変化理由（病気）", "食習慣変化理由（検査異常）", "食習慣変化理由（健康）", "食習慣変化理由（好み変化）", "食習慣変化理由（その他）", "食習慣変化理由（その他）", "食べ過ぎる", "食べる速さ", "朝食", "外食", "インスタント食品", "炒め物", "揚げ物", "あぶら身", "めんの汁", "調味塩", "醤油", "調理油", "肉調理法", "魚介調理法", "野菜調理法", "肉焼き具合", "焼き魚", "魚焦げ", "料理好み（こってり）", "料理好み（からい味）", "料理好み（塩加減の濃い味）", "料理好み（すっぱい味）", "料理好み（甘いもの）", "料理好み（熱いもの）", "茶碗", "米飯杯数", "玄米割合", "麦", "アワヒエ", "みそ汁頻度", "みそ汁杯数", "みそ汁味付", "牛ステーキ頻", "牛焼き物頻", "牛炒め物頻", "牛煮込み頻", "豚炒め物頻", "豚揚げ物頻", "豚煮込み頻", "豚煮物頻", "豚汁物頻", "豚レバー頻", "牛ステーキ量", "牛焼き物量", "牛炒め物量", "牛煮込み量", "豚炒め物量", "豚揚げ物量", "豚煮込み量", "豚煮物量", "豚汁物量", "豚レバー量", "鳥焼き物頻", "鳥炒め物頻", "鳥煮物頻", "鳥揚げ物頻", "鳥レバー頻", "ロースハム頻", "ウィンナー頻", "ベーコン頻", "ランチョンミート頻", "低脂肪乳頻", "普通乳頻", "卵頻", "チーズ頻", "ヨーグルト頻", "鳥焼き物量", "鳥炒め物量", "鳥煮物量", "鳥揚げ物量", "鳥レバー量", "ロースハム量", "ウィンナー量", "ベーコン量", "ランチョンミート量", "低脂肪乳量", "普通乳量", "卵量", "チーズ量", "ヨーグルト量", "塩たら・塩ほっけ・塩さけ頻", "干物頻", "マグロ缶詰頻", "さけ頻", "かつお頻", "ぶり頻", "たら頻", "たい頻", "あじ頻", "さんま頻", "しらす頻", "たらこ・すじこ・(いくら)頻", "うなぎ頻", "いか頻", "たこ頻", "えび頻", "あさり頻", "たにし頻", "ちくわ頻", "かまぼこ頻", "さつま揚げ頻", "塩たら・塩ほっけ・塩さけ量", "干物量", "マグロ缶詰量", "さけ量", "かつお量", "ぶり量", "たら量", "たい量", "あじ量", "さんま量", "しらす量", "たらこ・すじこ・(いくら)量", "うなぎ量", "いか量", "たこ量", "えび量", "あさり量", "たにし量", "ちくわ量", "かまぼこ量", "さつま揚げ量", "にんじん頻", "ホウレンソウ頻", "かぼちゃ頻", "きゃべつ頻", "だいこん頻", "にんじん量", "ホウレンソウ量", "かぼちゃ量", "きゃべつ量", "だいこん量", "漬タクワン頻", "漬緑の葉頻", "漬ウメボシ頻", "漬ハクサイ頻", "漬キュウリ頻", "漬なす頻", "漬かぶ頻", "ピーマン頻", "トマト頻", "長ねぎ頻", "青ねぎわけぎ頻", "にら頻", "春菊頻", "こまつな頻", "ブロッコリー頻", "たまねぎ頻", "きゅうり頻", "なす頻", "はくさい頻", "ごぼう頻", "もやし頻", "サヤインゲン頻", "レタス頻", "ｱｽﾊﾟﾗｶﾞｽ頻", "にんにく頻", "チンゲンサイ頻", "からしな頻", "にがうり頻", "フダンソウ頻", "漬タクワン量", "漬緑の葉量", "漬ウメボシ量", "漬ハクサイ量", "漬キュウリ量", "漬なす量", "漬かぶ量", "ピーマン量", "トマト量", "長ねぎ量", "青ねぎわけぎ量", "にら量", "春菊量", "こまつな量", "ブロッコリー量", "たまねぎ量", "きゅうり量", "なす量", "はくさい量", "ごぼう量", "もやし量", "サヤインゲン量", "レタス量", "ｱｽﾊﾟﾗｶﾞｽ量", "にんにく量", "チンゲンサイ量", "からしな量", "にがうり量", "フダンソウ量", "へちま頻", "よもぎ頻", "パパイヤ頻", "みかん頻", "柑橘類頻", "りんご頻", "かき頻", "いちご頻", "ぶどう頻", "メロン頻", "すいか頻", "もも頻", "なし頻", "キウィ頻", "パイン頻", "バナナ頻", "マンゴ頻", "へちま量", "よもぎ量", "パパイヤ量", "みかん量", "柑橘類量", "りんご量", "かき量", "いちご量", "ぶどう量", "メロン量", "すいか量", "もも量", "なし量", "キウィ量", "パイン量", "バナナ量", "マンゴ量", "パン頻", "うどん頻", "そば頻", "沖縄そば頻", "ラーメン頻", "パスタ頻", "そうめん頻", "もち頻", "和菓子頻", "ケーキ頻", "ビスケット頻", "チョコレート頻", "アイスクリーム頻", "スナック菓頻", "せんべい頻", "ごま頻", "ピーナッツ頻", "パン量", "うどん量", "そば量", "沖縄そば量", "ラーメン量", "パスタ量", "そうめん量", "もち量", "和菓子量", "ケーキ量", "ビスケット量", "チョコレート量", "アイスクリーム量", "スナック菓量", "せんべい量", "ごま量", "ピーナッツ量", "とうふ頻", "湯豆腐頻", "ゆし豆腐頻", "高野豆腐頻", "生揚げ頻", "油揚げ頻", "納豆頻", "サツマイモ頻", "ジャガイモ頻", "さといも頻", "山芋長芋頻", "こんにゃく頻", "しいたけ頻", "えのき頻", "しめじ頻", "わかめ頻", "ひじき頻", "のり頻", "とうふ量", "湯豆腐量", "ゆし豆腐量", "高野豆腐量", "生揚げ量", "油揚げ量", "納豆量", "サツマイモ量", "ジャガイモ量", "さといも量", "山芋長芋量", "こんにゃく量", "しいたけ量", "えのき量", "しめじ量", "わかめ量", "ひじき量", "のり量", "バター頻", "マーガリン頻", "ジャム頻", "はちみつ頻", "ドレッシング頻", "マヨネーズ頻", "ソース頻", "ケチャップ頻", "からし頻", "わさび頻", "とうがらし頻", "しょうが頻", "きなこ頻", "バター量", "マーガリン量", "ジャム量", "はちみつ量", "ドレッシング量", "マヨネーズ量", "ソース量", "ケチャップ量", "からし量", "わさび量", "とうがらし量", "しょうが量", "きなこ量", "せん茶", "日本茶缶ボトル", "ウーロン茶", "ウーロン茶缶ボトル", "紅茶", "紅茶缶ボトル", "コーヒー（豆）", "インスタントコーヒー", "缶コーヒー", "トマトジュース", "野菜ジュース", "オレンジジュース", "リンゴジュース", "ｸﾞﾚｰﾌﾟﾌﾙｰﾂｼﾞｭｰｽ", "果汁飲料(100%でない)", "炭酸飲料", "豆乳", "ヤクルト", "水道水", "市販水", "紅茶砂糖", "紅茶ミルク", "コーヒー砂糖", "コーヒーミルク", "カフィインレス紅茶", "カフェインレスコーヒー"];
+        
+        // ヘッダーとフォームのname属性の対応表
+        const headerToFormNameMap = {
+            "調査票種別": "kind", "ID": "id", "名前": "name", "ふりがな": "name_f", "現住所": "address",
+            "性別": "sex", "妊娠・授乳等": "pregnant", "年齢": "AGE", "身長": "HT", "体重": "WT",
+            "飲酒": "drink", "禁酒年齢": "DRAGEB", "禁酒理由": "drstprsn", "飲酒頻度": "drfreq",
+            "日本酒": "y005", "焼酎": "y006", "ビール": "y007", "ウィスキー": "y008", "ワイン": "y009",
+            "その他酒種類": "drot_tgk", "その他酒量": "y010", "めんの汁": "siru", "調味塩": "salt",
+            "醤油": "shoyu", "調理油": "cookoil", "肉調理法": "cookmeat", "魚介調理法": "cookfish",
+            "野菜調理法": "cookveg", "茶碗": "y6", "米飯杯数": "x6", "玄米割合": "x168",
+            "麦": "x8", "アワヒエ": "x9", "みそ汁頻度": "x10", "みそ汁杯数": "y10", "みそ汁味付": "z10",
+            "豚炒め物頻": "x15", "豚炒め物量": "y15", "豚揚げ物頻": "x16", "豚揚げ物量": "y16",
+            "豚煮込み頻": "x17", "豚煮込み量": "y17", "豚煮物頻": "x18", "豚煮物量": "y18",
+            "豚汁物頻": "x19", "豚汁物量": "y19", "豚レバー頻": "x20", "豚レバー量": "y20",
+            "牛ステーキ頻": "x11", "牛ステーキ量": "y11", "牛焼き物頻": "x12", "牛焼き物量": "y12",
+            "牛炒め物頻": "x13", "牛炒め物量": "y13", "牛煮込み頻": "x14", "牛煮込み量": "y14",
+            "鳥揚げ物頻": "x24", "鳥揚げ物量": "y24", "鳥レバー頻": "x25", "鳥レバー量": "y25",
+            "低脂肪乳頻": "x30", "低脂肪乳量": "y30", "普通乳頻": "x31", "普通乳量": "y31",
+            "卵頻": "x32", "卵量": "y32", "塩たら・塩ほっけ・塩さけ頻": "x35", "塩たら・塩ほっけ・塩さけ量": "y35",
+            "干物頻": "x36", "干物量": "y36", "さけ頻": "x38", "さけ量": "y38",
+            "かつお頻": "x39", "かつお量": "y39", "ぶり頻": "x40", "ぶり量": "y40",
+            "あじ頻": "x43", "あじ量": "y43", "さんま頻": "x44", "さんま量": "y44",
+            "たらこ・すじこ・(いくら)頻": "x46", "たらこ・すじこ・(いくら)量": "y46", "うなぎ頻": "x47", "うなぎ量": "y47",
+            "いか頻": "x48", "いか量": "y48", "あさり頻": "x51", "あさり量": "y51",
+            "にんじん頻": "x55", "にんじん量": "y55", "ホウレンソウ頻": "x56", "ホウレンソウ量": "y56",
+            "かぼちゃ頻": "x57", "かぼちゃ量": "y57", "トマト頻": "x67", "トマト量": "y67",
+            "長ねぎ頻": "x68", "長ねぎ量": "y68", "春菊頻": "x70", "春菊量": "y70",
+            "ブロッコリー頻": "x72", "ブロッコリー量": "y72", "たまねぎ頻": "x73", "たまねぎ量": "y73",
+            "はくさい頻": "x76", "はくさい量": "y76", "漬タクワン頻": "x60", "漬タクワン量": "y60",
+            "漬緑の葉頻": "x61", "漬緑の葉量": "y61", "漬ウメボシ頻": "x62", "漬ウメボシ量": "y62",
+            "漬ハクサイ頻": "x63", "漬ハクサイ量": "y63", "漬キュウリ頻": "x64", "漬キュウリ量": "y64",
+            "漬なす頻": "x65", "漬なす量": "y65", "みかん頻": "x88", "みかん量": "y88",
+            "りんご頻": "x90", "りんご量": "y90", "すいか頻": "x95", "すいか量": "y95",
+            "バナナ頻": "x100", "バナナ量": "y100", "パン頻": "x102", "パン量": "y102",
+            "うどん頻": "x103", "うどん量": "y103", "そば頻": "x104", "そば量": "y104",
+            "和菓子頻": "x108", "和菓子量": "y108", "みそ汁頻": "x113", "みそ汁量": "y113",
+            "とうふ頻": "x114", "とうふ量": "y114", "納豆頻": "x119", "納豆量": "y119", 
+            "しいたけ頻": "x124", "しいたけ量": "y124", "わかめ頻": "x127", "わかめ量": "y127",
+            "ひじき頻": "x128", "ひじき量": "y128",
+            "せん茶": "x138", "日本茶缶ボトル": "x187", "コーヒー（豆）": "x142", "インスタントコーヒー": "x190",
+            "缶コーヒー": "x143", "トマトジュース": "x148", "オレンジジュース": "x146",
+            "豆乳": "x137", "水道水": "x151"
+        };
+        
+        const csvValues = targetHeaders.map(header => {
+            const formName = headerToFormNameMap[header];
+            let value = "0"; // デフォルト値
+
+            if (header === "電話番号") {
+                const telParts = [formData['tel1'], formData['tel2'], formData['tel3']];
+                if (telParts.some(p => p)) { // いずれかの項目に値がある場合のみ結合
+                    value = telParts.join('-');
+                } else {
+                    value = ""; // 全て空の場合は空文字にする
+                }
+            } else if (header === "回答日") {
+                value = [formData['year'], formData['month'], formData['date']].join('/');
+            } else if (formName && formData[formName] !== undefined) {
+                value = formData[formName];
+            }
+            
+            // 値をダブルクォートで囲む（値自体にダブルクォートがあればエスケープ）
+            //return `"${(value || "").toString().replace(/"/g, '""')}"`;
+            
+            // 値をダブルクォートで囲まない
+            return value;
+        });
+
+
+        // CSVのヘッダー行とデータ行を作成
+        const csvHeader = targetHeaders.join(",");
+        const csvData = csvValues.join(",");
+
+        // ヘッダーとデータを結合し、CSVコンテンツを作成
+        const csvContent = csvHeader + "\n" + csvData;
+
+        // CSVファイル用のBlobを生成（BOMを先頭に付与してExcelでの文字化けを防止）
+        const blob = new Blob(["\uFEFF" + csvContent], {
+          type: "text/csv;charset=utf-8;",
+        });
+
+        // ダウンロード用のリンクを一時的に作成
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+
+        // 氏名と日時を元にファイル名を生成
+        const now = new Date();
+        const personName = formData['name'] || ''; // 氏名を取得 (空の場合もある)
+        const timestamp = `${now.getFullYear()}${String(
+          now.getMonth() + 1
+        ).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}_${String(
+          now.getHours()
+        ).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}${String(
+          now.getSeconds()
+        ).padStart(2, "0")}`;
+        
+        const fileName = `FFQ_NEXT_${personName}_${timestamp}.csv`;
+
+        link.setAttribute("download", fileName);
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+
+        // リンクをクリックしてダウンロードを実行
+        link.click();
+
+        // 一時的なリンクを削除
+        document.body.removeChild(link);
+
+        alert("CSVファイルが保存されました。");
+      });
+
+      $("input").on("change", function () {
+        $(this).closest("fieldset").removeClass("error");
+      });
+    });
+  </script>
+  <script>
+    document.getElementById('ffqnSurveyData').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      const data = {};
+      formData.forEach((v, k) => {
+        // ラジオやチェックボックスの複数選択対応
+        if (data[k]) {
+          if (Array.isArray(data[k])) {
+            data[k].push(v);
+          } else {
+            data[k] = [data[k], v];
+          }
+        } else {
+          data[k] = v;
+        }
+      });
+
+      const endpoint = "★ここにGASのURL貼ってね★";
+
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          alert("送信完了しました。ありがとうございました。");
+          this.reset(); // フォームリセット
+        } else {
+          alert("送信失敗しました。もう一度じっっこうしてください。");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("エラー発生しました。インターネット接続を確認してください");
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="enquete-title-wrapper">
+      <h1 class="enquete-title"><span class="sub">食物摂取頻度調査票</span><br>FFQ NEXT<span class="ver">(短縮版)</span></h1>
+    </div>
+
+    <form id="ffqnSurveyData" method="post" action="/np/ffqnext/short_done.html" class="formStyle">
+  
+    <input type="hidden" name="token" value="15e0333d-3627-4e7b-8dda-d388d5391122">
+  	<input type="hidden" name="kind" value="2">
+
+      
+      
+       <ul id="gerror" class="error-msg" style="display:none">
+       </ul>
+
+  
+
+       <ul id="gerror" class="error-msg" style="display:none">
+       </ul>
+
+      <div class="personalData">
+        <fieldset>
+          <div class="personalData__item" style="display: none;">
+            <label class="label" for="id">① ID <i>（①, ②・③いずれか必須）</i></label>
+            <input type="text" placeholder="" class="input-single full" id="id" name="id">
+          </div>
+          <div class="personalData__item" style="display: none;">
+            <label class="label" for="name_f">② ふりがな <i>（①, ②・③いずれか必須）</i></label>
+            <input type="text" placeholder="すずきたろう" class="input-single full" id="name_f" name="name_f">
+          </div>
+          <div class="personalData__item">
+            <label class="label" for="name">氏名</label>
+            <input type="text" placeholder="鈴木太郎" class="input-single full" id="name" name="name">
+          </div>
+          <div class="personalData__item" style="display: none;">
+            <label class="label" for="address">④ 現住所<i>（任意）</i></label>
+            <input type="text" placeholder="" class="input-single full" id="address" name="address">
+          </div>
+          <div class="personalData__item tel" style="display: none;">
+            <label class="label" for="tel">⑤ 電話<i>（任意）</i></label>
+            <input type="tel" class="input-single short" id="tel1" name="tel1">
+            <input type="tel" class="input-single short" id="tel2" name="tel2">
+            <input type="tel" class="input-single short" id="tel3" name="tel3">
+          </div>
+          <div class="personalData__item" style="display: none;">
+            <label class="label" for="email">⑥ メールアドレス<i>（任意）</i></label>
+            <input type="email" maxlength="50" placeholder="your-adress@mail.jp" class="input-single full" id="email" name="email">
+          </div>
+          <div class="personalData__item" style="display: none;">
+            <label class="label" for="mailTo">⑦ データ送信先<i>（必須）</i></label>
+            <input type="email" maxlength="50" placeholder="send-adress@mail.jp" class="input-single full" id="mailTo" name="mailTo">
+          </div>
+        </fieldset>
+        <div class="personalData__attention" style="display: none;">
+          注）⑥および⑦に回答データ（CSV）のダウンロードURLが送付されます。<br>
+          ⑦には調査実施者のメールアドレスを入力してください。
+        </div>
+        <div class="information">
+          <a href="https://www.kenpakusha.co.jp/np/news/483/" target="_blank">
+            <dl>
+              <dt>調査を実施される方へ：</dt>
+              <dd>入力フォームの初期値を指定する機能を実装しました。<br>詳細はこちらをご覧ください。</dd>
+            </dl>
+          </a>
+        </div>
+      </div>
+
+      <div class="attention">
+        <h4 class="attention__title">回答上の注意</h4>
+        <ol class="number-list">
+          <li>ご本人，または，代理の方が回答してください。</li>
+          <li>アンケートの対象になっている方についてお答えください。</li>
+          <li>太枠内に記入または選択肢から選んでください。また選択肢に「その他」を選んだ場合，その後ろの入力欄に， 具体的な内容を入力してください。</li>
+        </ol>
+      </div>
+
+      <dl class="remarks">
+        <dt>著作：</dt>
+        <dd>国立がん研究センター</dd>
+        <dt>文献：</dt>
+        <dd> Yokoyama Y, Takachi R, Ishihara J, Ishii Y, Sasazuki S, Sawada N, Shinozawa Y, Tanaka J, Kato E, Kitamura
+          K, Nakamura K, Tsugane S. Validity of Short and Long Self-Administered Food Frequency Questionnaires in
+          Ranking Dietary Intake in Middle-Aged and Elderly Japanese in the Japan Public Health Center-Based
+          Prospective Study for the Next Generation (JPHC-NEXT) Protocol Area. J Epidemiol. 2016 Aug 5;26(8):420-32.
+          PMID: 27064130.
+        </dd>
+      </dl>
+
+      <div class="group">
+        <fieldset name="ans_date" id="ans_date">
+          <legend class="question">本アンケートに回答された日付を回答してください。<i>（西暦で回答してください）</i></legend>
+          <div class="input-date">
+            <select id="year" name="year"><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025" selected="selected">2025</option></select>&nbsp;年
+            <select id="month" name="month"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7" selected="selected">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select>&nbsp;月
+            <select id="date" name="date"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21" selected="selected">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option></select>&nbsp;日
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <fieldset class="sex">
+          <legend class="question">あなたの性別は？</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="sex" value="1"><span>男</span></label>
+            <label><input type="radio" name="sex" value="2"><span>女</span></label>
+          </div>
+        </fieldset>
+        <fieldset name="pregnant" id="pregnant" class="pregnant">
+          <legend class="question">妊娠区分は？<i>（女性のみ）</i></legend>
+          <div class="input-normal">
+            <label><input type="radio" name="pregnant" value="1"><span>なし</span></label>
+            <label><input type="radio" name="pregnant" value="2"><span>初期</span></label>
+            <label><input type="radio" name="pregnant" value="3"><span>中期</span></label>
+            <label><input type="radio" name="pregnant" value="4"><span>後期</span></label>
+            <label><input type="radio" name="pregnant" value="5"><span>授乳婦</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="AGE">
+          <legend class="question">現在の年齢は？</legend>
+          <div class="input">
+            <label><input type="text" name="AGE" id="AGE" maxlength="3" class="input-single short">歳</label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="group column">
+        <fieldset class="HT">
+          <legend class="question">現在の身長は？</legend>
+          <div class="input">
+            <label><input type="text" name="HT" id="HT" maxlength="3" class="input-single short">cm
+              <i>(小数点以下は四捨五入)</i></label>
+          </div>
+        </fieldset>
+        <fieldset class="WT">
+          <legend class="question">現在の体重は？</legend>
+          <div class="input">
+            <label><input type="text" name="WT" id="WT" maxlength="3" class="input-single short">kg
+              <i>(小数点以下は四捨五入)</i></label>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- お酒についての設問 -->
+      <div class="group">
+        <p class="question">現在，お酒を飲みますか？</p>
+        <fieldset name="drink" id="drink" class="input-normal drink">
+          <label><input type="radio" name="drink" value="1"><span>飲む</span></label>
+          <label><input type="radio" name="drink" value="2"><span>やめた</span></label>
+          <label><input type="radio" name="drink" value="3"><span>飲まない</span></label>
+        </fieldset>
+
+        <!-- name="DRAGEB" id="DRAGEB" -->
+
+        <fieldset class="drink-stop DRAGEB" style="display: none;">
+          <p class="question">何歳の時お酒をやめましたか？</p>
+          <div class="input">
+            <label><input type="text" name="DRAGEB" class="input-single short">歳</label>
+          </div>
+          <p class="question">やめた理由は何ですか？</p>
+          <div class="input-normal">
+            <label><input type="radio" name="drstprsn" value="1"><span>病気をしたから</span></label>
+            <label><input type="radio" name="drstprsn" value="2"><span>病気はしないが<br>健康に悪いから</span></label>
+            <label><input type="radio" name="drstprsn" value="3"><span>その他<br>（経済的理由など）</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset name="drfreq" id="drfreq" class="drink-now drfreq" style="display: none;">
+          <p class="question">どのくらいの頻度で飲みますか？（※やめた方は飲んでいた頃のことを書いてください）</p>
+          <div class="input-normal">
+            <label><input type="radio" name="drfreq" value="1"><span>ほとんど<br>飲まない</span></label>
+            <label><input type="radio" name="drfreq" value="2"><span>月に１～３日</span></label>
+            <label><input type="radio" name="drfreq" value="3"><span>週に１～２日</span></label>
+            <label><input type="radio" name="drfreq" value="4"><span>週に３～４日</span></label>
+            <label><input type="radio" name="drfreq" value="5"><span>週に５～６日</span></label>
+            <label><input type="radio" name="drfreq" value="6"><span>毎日のむ</span></label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="group liquorType" style="display: none;">
+        <div class="question-large">１日に飲む，もっとも普通の<span class="wavy_underline">組み合わせ</span>を選んでください。</div>
+        <div class="example">
+          <p class="example_title"><span>例</span>ふだんビール「大ビン１本」飲んだあとに，日本酒「２合」飲むなら</p>
+          「ビール: <span class="underline bold">１本</span>」「日本酒: <span class="underline bold">２合</span>」「焼酎・泡盛: <span class="underline bold">飲まない</span>」「ウイスキー: <span class="underline bold">飲まない</span>」「ワイン:
+          <span class="underline bold">飲まない</span>」<br>に<span class="bold">チェック</span>を入れてください。
+        </div>
+        <fieldset class="liquorType__item y005">
+          <legend class="question">日本酒　１合<i>（180ml）</i></legend>
+          <div class="input-vertical">
+            <label class="hidden"><input type="radio" name="y005" value="0"><span>回答なし</span></label>
+            <label><input type="radio" name="y005" value="1"><span>飲まない</span></label>
+            <label><input type="radio" name="y005" value="2"><span><i>0.5</i>合未満</span></label>
+            <label><input type="radio" name="y005" value="3"><span><i>0.5</i>～<i>1</i>合<br>未満</span></label>
+            <label><input type="radio" name="y005" value="4"><span>１合</span></label>
+            <label><input type="radio" name="y005" value="5"><span>２合</span></label>
+            <label><input type="radio" name="y005" value="6"><span>３合</span></label>
+            <label><input type="radio" name="y005" value="7"><span>４合</span></label>
+            <label><input type="radio" name="y005" value="8"><span>５合以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="liquorType__item y006">
+          <legend class="question">焼酎・泡盛　原液１合<i>（180ml）</i>で<i>（チューハイ350ml缶１本を0.7合と換算してください）</i></legend>
+          <div class="input-vertical">
+            <label class="hidden"><input type="radio" name="y006" value="0"><span>回答なし</span></label>
+            <label><input type="radio" name="y006" value="1"><span>飲まない</span></label>
+            <label><input type="radio" name="y006" value="2"><span><i>0.5</i>合未満</span></label>
+            <label><input type="radio" name="y006" value="3"><span><i>0.5</i>～<i>1</i>合<br>未満</span></label>
+            <label><input type="radio" name="y006" value="4"><span>１合</span></label>
+            <label><input type="radio" name="y006" value="5"><span>２合</span></label>
+            <label><input type="radio" name="y006" value="6"><span>３合</span></label>
+            <label><input type="radio" name="y006" value="7"><span>４合</span></label>
+            <label><input type="radio" name="y006" value="8"><span>５合以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="liquorType__item y007">
+          <legend class="question">ビール<i>（発泡酒）</i>大ビン<i>（633ml）</i>で<i>（中ビン又は500ml缶を0.8本，小ビン又は350ml缶を0.6本と換算してください）</i>
+          </legend>
+          <div class="input-vertical">
+            <label class="hidden"><input type="radio" name="y007" value="0"><span>回答なし</span></label>
+            <label><input type="radio" name="y007" value="1"><span>飲まない</span></label>
+            <label><input type="radio" name="y007" value="2"><span><i>0.5</i>本未満</span></label>
+            <label><input type="radio" name="y007" value="3"><span><i>0.5</i>～<i>1</i>本<br>未満</span></label>
+            <label><input type="radio" name="y007" value="4"><span>１本</span></label>
+            <label><input type="radio" name="y007" value="5"><span>２本</span></label>
+            <label><input type="radio" name="y007" value="6"><span>３本</span></label>
+            <label><input type="radio" name="y007" value="7"><span>４本</span></label>
+            <label><input type="radio" name="y007" value="8"><span>５本以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="liquorType__item y008">
+          <legend class="question">ウイスキー・ブランデーシングル<i>（30ml）</i>で</legend>
+          <div class="input-vertical">
+            <label class="hidden"><input type="radio" name="y008" value="0"><span>回答なし</span></label>
+            <label><input type="radio" name="y008" value="1"><span>飲まない</span></label>
+            <label><input type="radio" name="y008" value="2"><span><i>0.5</i>杯未満</span></label>
+            <label><input type="radio" name="y008" value="3"><span><i>0.5</i>～<i>1</i>杯<br>未満</span></label>
+            <label><input type="radio" name="y008" value="4"><span>１杯</span></label>
+            <label><input type="radio" name="y008" value="5"><span>２杯</span></label>
+            <label><input type="radio" name="y008" value="6"><span>３杯</span></label>
+            <label><input type="radio" name="y008" value="7"><span>４杯</span></label>
+            <label><input type="radio" name="y008" value="8"><span>５杯以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="liquorType__item y009">
+          <legend class="question">ワイン　グラス<i>（100ml）</i>で</legend>
+          <div class="input-vertical">
+            <label class="hidden"><input type="radio" name="y009" value="0"><span>回答なし</span></label>
+            <label><input type="radio" name="y009" value="1"><span>飲まない</span></label>
+            <label><input type="radio" name="y009" value="2"><span><i>0.5</i>杯未満</span></label>
+            <label><input type="radio" name="y009" value="3"><span><i>0.5</i>～<i>1</i>杯<br>未満</span></label>
+            <label><input type="radio" name="y009" value="4"><span>１杯</span></label>
+            <label><input type="radio" name="y009" value="5"><span>２杯</span></label>
+            <label><input type="radio" name="y009" value="6"><span>３杯</span></label>
+            <label><input type="radio" name="y009" value="7"><span>４杯</span></label>
+            <label><input type="radio" name="y009" value="8"><span>５杯以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="liquorType__item">
+          <legend class="question">
+            <span class="mr10">その他</span>
+            <input type="text" name="drot_tgk" id="drot_tgk" placeholder="お酒の種類を記入してください" class="input-single full">
+          </legend>
+          <fieldset name="y010" id="y010" class="amount input-vertical y010" disabled="">
+            <label class="no-input"><input type="radio" name="y010" value="1" disabled="disabled"><span>飲まない</span></label>
+            <label><input type="radio" name="y010" value="2"><span><i>0.5</i>杯未満</span></label>
+            <label><input type="radio" name="y010" value="3"><span><i>0.5</i>～<i>1</i>杯<br>未満</span></label>
+            <label><input type="radio" name="y010" value="4"><span>１杯</span></label>
+            <label><input type="radio" name="y010" value="5"><span>２杯</span></label>
+            <label><input type="radio" name="y010" value="6"><span>３杯</span></label>
+            <label><input type="radio" name="y010" value="7"><span>４杯</span></label>
+            <label><input type="radio" name="y010" value="8"><span>５杯以上</span></label>
+          </fieldset>
+        </fieldset>
+      </div>
+      <!-- //お酒についての設問 -->
+
+  
+
+
+
+      <h2 class="block-title">食生活に関する質問</h2>
+      <div class="block-explain">
+        <p><span class="underline">過去１年間</span>の食事を思い出して，平均的な頻度や量を答えてください。
+        </p>
+        <p>質問の数も多く，たいへんとは思いますが，ぜひ最後まで記入してくださいますよう，お願いいたします。</p>
+      </div>
+
+      <div class="group">
+      	<fieldset class="siru">
+          <legend class="question">ラーメン・うどん・そばの汁をどれくらい飲みますか？</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="siru" value="1"><span>ほとんど<br>飲まない</span></label>
+            <label><input type="radio" name="siru" value="2"><span>3分の1位<br>飲む</span></label>
+            <label><input type="radio" name="siru" value="3"><span>半分位<br>飲む</span></label>
+            <label><input type="radio" name="siru" value="4"><span>3分の2位<br>飲む</span></label>
+            <label><input type="radio" name="siru" value="5"><span>ほとんど<br>全部飲む</span></label>
+          </div>
+        </fieldset>
+      </div>
+      
+      <div class="group">
+       <fieldset class="salt">
+          <legend class="question">食卓で料理に，塩をふる習慣がありますか？</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="salt" value="1"><span>ない</span></label>
+            <label><input type="radio" name="salt" value="2"><span>まれにふる</span></label>
+            <label><input type="radio" name="salt" value="3"><span>ときどきふる</span></label>
+            <label><input type="radio" name="salt" value="4"><span>たいていふる</span></label>
+            <label><input type="radio" name="salt" value="5"><span>いつもふる</span></label>
+          </div>
+        </fieldset>
+      </div>
+      
+      <div class="group">
+       <fieldset class="shoyu">
+          <legend class="question">食卓で料理に，しょうゆをかける習慣がありますか？</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="shoyu" value="1"><span>ない</span></label>
+            <label><input type="radio" name="shoyu" value="2"><span>まれにかける</span></label>
+            <label><input type="radio" name="shoyu" value="3"><span>ときどきかける</span></label>
+            <label><input type="radio" name="shoyu" value="4"><span>たいていかける</span></label>
+            <label><input type="radio" name="shoyu" value="5"><span>いつもかける</span></label>
+          </div>
+        </fieldset>
+      </div>
+      
+      <div class="group">
+       <fieldset class="cookoil">
+          <legend class="question">一番よくつかう油を選んで１つだけマークしてください。</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="cookoil" value="1"><span>サラダ油(調合油)</span></label>
+            <label><input type="radio" name="cookoil" value="2"><span>サフラワー油(べに花油)</span></label>
+            <label><input type="radio" name="cookoil" value="3"><span>コーン油</span></label>
+            <label><input type="radio" name="cookoil" value="4"><span>大豆油</span></label>
+            <label><input type="radio" name="cookoil" value="5"><span>なたね油・キャノーラ油</span></label>
+            <label><input type="radio" name="cookoil" value="6"><span>オリーブ油</span></label>
+            <label><input type="radio" name="cookoil" value="7"><span>その他</span></label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <p class="question-large">もっとも多い調理方法を１つだけ選択してください。</p>
+        <fieldset class="cookmeat">
+          <legend class="question">肉類は？</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="cookmeat" value="1"><span>なま</span></label>
+            <label><input type="radio" name="cookmeat" value="2"><span>煮る</span></label>
+            <label><input type="radio" name="cookmeat" value="3"><span>焼く</span></label>
+            <label><input type="radio" name="cookmeat" value="4"><span>あげる</span></label>
+            <label><input type="radio" name="cookmeat" value="5"><span>炒める</span></label>
+            <label><input type="radio" name="cookmeat" value="6"><span>その他</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="cookfish">
+          <legend class="question">魚介類は？</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="cookfish" value="1"><span>なま</span></label>
+            <label><input type="radio" name="cookfish" value="2"><span>煮る</span></label>
+            <label><input type="radio" name="cookfish" value="3"><span>焼く</span></label>
+            <label><input type="radio" name="cookfish" value="4"><span>あげる</span></label>
+            <label><input type="radio" name="cookfish" value="5"><span>炒める</span></label>
+            <label><input type="radio" name="cookfish" value="6"><span>その他</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="cookveg">
+          <legend class="question">野菜類は？</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="cookveg" value="1"><span>なま</span></label>
+            <label><input type="radio" name="cookveg" value="2"><span>煮る</span></label>
+            <label><input type="radio" name="cookveg" value="3"><span>焼く</span></label>
+            <label><input type="radio" name="cookveg" value="4"><span>あげる</span></label>
+            <label><input type="radio" name="cookveg" value="5"><span>炒める</span></label>
+            <label><input type="radio" name="cookveg" value="6"><span>その他</span></label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <p class="question-large">「ごはん(米飯)」についておたずねします。</p>
+        <fieldset class="y6">
+          <legend class="question">どのくらいの大きさの茶碗で食べますか?</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="y6" value="1"><span>小さな茶碗</span></label>
+            <label><input type="radio" name="y6" value="2"><span>普通の茶碗(女性用)</span></label>
+            <label><input type="radio" name="y6" value="3"><span>普通の茶碗(男性用)</span></label>
+            <label><input type="radio" name="y6" value="4"><span>どんぶり</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="x6">
+          <legend class="question">朝・昼・夕食あわせて，<span class="underline">1日に</span>およそ何杯食べますか?</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="x6" value="1"><span>1杯<br>未満 </span></label>
+            <label><input type="radio" name="x6" value="2"><span>1杯</span></label>
+            <label><input type="radio" name="x6" value="3"><span>2杯</span></label>
+            <label><input type="radio" name="x6" value="4"><span>3杯</span></label>
+            <label><input type="radio" name="x6" value="5"><span>4杯</span></label>
+            <label><input type="radio" name="x6" value="6"><span>5杯</span></label>
+            <label><input type="radio" name="x6" value="7"><span>6杯</span></label>
+            <label><input type="radio" name="x6" value="8"><span>7～9杯</span></label>
+            <label><input type="radio" name="x6" value="9"><span>10杯<br>以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="x168">
+          <legend class="question">1日のごはんのうち、玄米の割合は、平均どのくらいですか?</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="x168" value="1"><span>まぜない</span></label>
+            <label><input type="radio" name="x168" value="2"><span>3分の1位</span></label>
+            <label><input type="radio" name="x168" value="3"><span>半分位</span></label>
+            <label><input type="radio" name="x168" value="4"><span>全部</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="x8">
+          <legend class="question">「麦」をまぜますか?</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="x8" value="1"><span>まぜない</span></label>
+            <label><input type="radio" name="x8" value="2"><span>まれにまぜる</span></label>
+            <label><input type="radio" name="x8" value="3"><span>ときどきまぜる</span></label>
+            <label><input type="radio" name="x8" value="4"><span>よくまぜる</span></label>
+            <label><input type="radio" name="x8" value="5"><span>いつもまぜる</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="x9">
+          <legend class="question">「あわ・ひえ」をまぜますか？</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="x9" value="1"><span>まぜない</span></label>
+            <label><input type="radio" name="x9" value="2"><span>まれにまぜる</span></label>
+            <label><input type="radio" name="x9" value="3"><span>ときどきまぜる</span></label>
+            <label><input type="radio" name="x9" value="4"><span>よくまぜる</span></label>
+            <label><input type="radio" name="x9" value="5"><span>いつもまぜる</span></label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <p class="question-large">「みそ汁」についておたずねします。</p>
+        <fieldset class="x10">
+          <legend class="question">どのくらいの頻度で飲みますか? </legend>
+          <div class="input-normal">
+            <label><input type="radio" name="x10" value="1"><span>ほとんど飲まない</span></label>
+            <label><input type="radio" name="x10" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x10" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x10" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x10" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x10" value="6"><span>毎日飲む</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="y10">
+          <legend class="question">朝・昼・夕食あわせて，<span class="underline">1日に</span>およそ何杯飲みますか? </legend>
+          <div class="input-normal">
+            <label><input type="radio" name="y10" value="1"><span>1杯<br>未満</span></label>
+            <label><input type="radio" name="y10" value="2"><span>1杯</span></label>
+            <label><input type="radio" name="y10" value="3"><span>2杯</span></label>
+            <label><input type="radio" name="y10" value="4"><span>3杯</span></label>
+            <label><input type="radio" name="y10" value="5"><span>4杯</span></label>
+            <label><input type="radio" name="y10" value="6"><span>5杯</span></label>
+            <label><input type="radio" name="y10" value="7"><span>6杯</span></label>
+            <label><input type="radio" name="y10" value="8"><span>7～9杯</span></label>
+            <label><input type="radio" name="y10" value="9"><span>10杯<br>以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="z10">
+          <legend class="question">どのような味付けですか？</legend>
+          <div class="input-normal">
+            <label><input type="radio" name="z10" value="1"><span>かなりうすめ</span></label>
+            <label><input type="radio" name="z10" value="2"><span>ややうすめ</span></label>
+            <label><input type="radio" name="z10" value="3"><span>ふつう</span></label>
+            <label><input type="radio" name="z10" value="4"><span>ややこいめ</span></label>
+            <label><input type="radio" name="z10" value="5"><span>かなりこいめ</span></label>
+          </div>
+        </fieldset>
+      </div>
+
+
+
+      <h2 class="block-title"><span class="underline">過去１年間</span>の食事を思い出して，平均的な頻度と量を回答してください。</h2>
+
+      <div class="example">
+        <p class="example_title"><span>例</span>「牛のステーキ」を月に２回くらい食べ，１回に食べる量は「１枚の半分」くらい</p>
+        <p>
+          「<span class="bold">月に１～３回</span>」に<span class="bold">チェック</span>を入れ，<br>1回に食べる量は「<span class="bold">少ない</span><small>（半分以下）</small>」に<span class="bold">チェック</span>を入れてください。
+        </p>
+      </div>
+      <div class="example">
+        <p class="example_title"><span>例</span>「牛のステーキ」をほとんど食べない（月１回未満）か全く食べない</p>
+        <p>
+          「<span class="bold">月に１回未満</span>」に<span class="bold">チェック</span>を入れてください。(1回に食べる量のチェックはいりません)
+        </p>
+      </div>
+
+      <!-- 【頻度と量】 肉・卵・乳製品-->
+      <div class="group">
+        <!-- 豚肉 炒め物 -->
+        <fieldset class="divideUp x15">
+          <legend class="question"><span>豚肉</span>炒め物(野菜炒めなど) </legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x15" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x15" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x15" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x15" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x15" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x15" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x15" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x15" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x15" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y15">
+          <legend class="inner-color__title">1回に食べる量は<b>うす切り3枚(60g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y15" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y15" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y15" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y15" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+        <!-- 豚肉 揚げ物 -->
+        <fieldset class="divideUp x16">
+          <legend class="question"><span>豚肉</span>揚げ物(とんかつなど)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x16" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x16" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x16" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x16" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x16" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x16" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x16" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x16" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x16" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y16">
+          <legend class="inner-color__title">1回に食べる量は<b>とんかつ用1枚(100g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y16" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y16" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y16" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y16" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+        <!-- 豚肉 煮込み -->
+        <fieldset class="divideUp x17">
+          <legend class="question"><span>豚肉</span>煮込み(カレー・シチューなど)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x17" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x17" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x17" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x17" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x17" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x17" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x17" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x17" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x17" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y17">
+          <legend class="inner-color__title">1回に食べる量は<b>2～3cm角切り3個(50g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y17" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y17" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y17" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y17" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+        <!-- 豚肉 煮物 -->
+        <fieldset class="divideUp x18">
+          <legend class="question"><span>豚肉</span>煮物(角煮<span class="text-s">[沖縄名:ラフティ]</span>など)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x18" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x18" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x18" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x18" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x18" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x18" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x18" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x18" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x18" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y18">
+          <legend class="inner-color__title">1回に食べる量は<b>2切れ(60g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y18" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y18" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y18" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y18" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+        <!-- 豚肉 汁物 -->
+        <fieldset class="divideUp x19">
+          <legend class="question"><span>豚肉</span>汁物(豚汁・[沖縄名：中身汁]など)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x19" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x19" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x19" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x19" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x19" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x19" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x19" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x19" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x19" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y19">
+          <legend class="inner-color__title">1回に食べる量は<b>うす切り2枚(40g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y19" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y19" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y19" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y19" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+        <!-- 豚肉 豚レバー -->
+        <fieldset class="divideUp x20">
+          <legend class="question"><span>豚肉</span>豚レバー(ニラレバ炒めなど)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x20" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x20" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x20" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x20" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x20" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x20" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x20" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x20" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x20" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y20">
+          <legend class="inner-color__title">1回に食べる量は<b>2切れ(40g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y20" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y20" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y20" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y20" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- 牛肉 ステーキ -->
+        <fieldset class="divideUp x11">
+          <legend class="question"><span>牛肉</span>ステーキ</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x11" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x11" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x11" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x11" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x11" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x11" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x11" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x11" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x11" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y11">
+          <legend class="inner-color__title">1回に食べる量は<b>ステーキ用1枚(150g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y11" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y11" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y11" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y11" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+        <!-- 牛肉 焼き物 -->
+        <fieldset class="divideUp x12">
+          <legend class="question"><span>牛肉</span>焼き物(焼き肉など)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x12" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x12" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x12" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x12" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x12" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x12" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x12" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x12" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x12" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y12">
+          <legend class="inner-color__title">1回に食べる量は<b>うす切り5枚(100g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y12" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y12" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y12" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y12" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+        <!-- 牛肉 炒め物 -->
+        <fieldset class="divideUp x13">
+          <legend class="question"><span>牛肉</span>炒め物(野菜炒めなど)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x13" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x13" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x13" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x13" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x13" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x13" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x13" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x13" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x13" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y13">
+          <legend class="inner-color__title">1回に食べる量は<b>うす切り3枚(60g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y13" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y13" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y13" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y13" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+        <!-- 牛肉 煮込み -->
+        <fieldset class="divideUp x14">
+          <legend class="question"><span>牛肉</span>煮込み(カレー・シチューなど)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x14" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x14" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x14" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x14" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x14" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x14" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x14" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x14" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x14" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y14">
+          <legend class="inner-color__title">1回に食べる量は<b>2～3cm角切り3個(50g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y14" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y14" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y14" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y14" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- 鶏肉 揚げ物 -->
+        <fieldset class="divideUp x24">
+          <legend class="question"><span>鶏肉</span>揚げ物(唐揚げなど)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x24" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x24" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x24" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x24" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x24" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x24" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x24" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x24" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x24" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y24">
+          <legend class="inner-color__title">1回に食べる量は<b>3個(50g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y24" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y24" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y24" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y24" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+        <!-- 鶏肉 鳥レバー -->
+        <fieldset class="divideUp x25">
+          <legend class="question"><span>鶏肉</span>鳥レバー(やきとりなど)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x25" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x25" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x25" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x25" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x25" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x25" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x25" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x25" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x25" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y25">
+          <legend class="inner-color__title">1回に食べる量は<b>やきとり1本(30g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y25" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y25" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y25" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y25" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- 牛乳 低脂肪乳 -->
+        <fieldset class="divideUp x30">
+          <legend class="question"><span>牛乳</span>低脂肪乳</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x30" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x30" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x30" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x30" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x30" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x30" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x30" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x30" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x30" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y30">
+          <legend class="inner-color__title">1回に食べる量は<b>200cc　1本</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y30" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y30" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y30" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y30" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+        <!-- 牛乳 普通乳 -->
+        <fieldset class="divideUp x31">
+          <legend class="question"><span>牛乳</span>普通乳</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x31" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x31" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x31" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x31" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x31" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x31" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x31" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x31" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x31" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y31">
+          <legend class="inner-color__title">1回に食べる量は<b>200cc　1本</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y31" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y31" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y31" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y31" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- 卵 -->
+        <fieldset class="divideUp x32">
+          <legend class="question">卵</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x32" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x32" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x32" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x32" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x32" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x32" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x32" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x32" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x32" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y32">
+          <legend class="inner-color__title">1回に食べる量は<b>中1個(50g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y32" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y32" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y32" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y32" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+
+      <!-- 頻度と量 魚介類-->
+      <div class="group">
+        <!-- 塩たら・塩ほっけ・塩さけ -->
+        <fieldset class="divideUp x35">
+          <legend class="question">塩たら・塩ほっけ・塩さけ</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x35" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x35" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x35" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x35" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x35" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x35" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x35" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x35" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x35" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y35">
+          <legend class="inner-color__title">1回に食べる量は<b>切り身1切れ(70g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y35" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y35" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y35" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y35" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- ひもの -->
+        <fieldset class="divideUp x36">
+          <legend class="question">ひもの(あじ開きぼしなど)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x36" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x36" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x36" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x36" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x36" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x36" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x36" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x36" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x36" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y36">
+          <legend class="inner-color__title">1回に食べる量は<b>1枚(50g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y36" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y36" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y36" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y36" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- さけ・ます -->
+        <fieldset class="divideUp x38">
+          <legend class="question">さけ・ます</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x38" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x38" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x38" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x38" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x38" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x38" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x38" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x38" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x38" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y38">
+          <legend class="inner-color__title">1回に食べる量は<b>切り身1切れ(70g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y38" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y38" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y38" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y38" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- かつお・まぐろ -->
+        <fieldset class="divideUp x39">
+          <legend class="question">かつお・まぐろ</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x39" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x39" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x39" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x39" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x39" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x39" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x39" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x39" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x39" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y39">
+          <legend class="inner-color__title">1回に食べる量は<b>さしみ4切れ(60g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y39" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y39" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y39" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y39" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- ぶり・はまち -->
+        <fieldset class="divideUp x40">
+          <legend class="question">ぶり・はまち</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x40" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x40" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x40" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x40" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x40" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x40" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x40" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x40" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x40" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y40">
+          <legend class="inner-color__title">1回に食べる量は<b>さしみ4切れ(60g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y40" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y40" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y40" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y40" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- あじ・いわし -->
+        <fieldset class="divideUp x43">
+          <legend class="question">あじ・いわし</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x43" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x43" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x43" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x43" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x43" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x43" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x43" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x43" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x43" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y43">
+          <legend class="inner-color__title">1回に食べる量は<b>1尾(80g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y43" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y43" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y43" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y43" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- さんま・さば -->
+        <fieldset class="divideUp x44">
+          <legend class="question">さんま・さば</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x44" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x44" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x44" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x44" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x44" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x44" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x44" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x44" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x44" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y44">
+          <legend class="inner-color__title">1回に食べる量は<b>1尾(80g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y44" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y44" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y44" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y44" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- たらこ・すじこ・いくら -->
+        <fieldset class="divideUp x46">
+          <legend class="question">たらこ・すじこ・いくら</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x46" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x46" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x46" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x46" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x46" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x46" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x46" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x46" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x46" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y46">
+          <legend class="inner-color__title">1回に食べる量は<b>たらこ4分の1腹(20g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y46" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y46" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y46" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y46" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- うなぎ -->
+        <fieldset class="divideUp x47">
+          <legend class="question">うなぎ</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x47" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x47" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x47" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x47" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x47" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x47" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x47" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x47" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x47" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y47">
+          <legend class="inner-color__title">1回に食べる量は<b>2分の1串(50g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y47" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y47" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y47" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y47" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- いか -->
+        <fieldset class="divideUp x48">
+          <legend class="question">いか</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x48" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x48" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x48" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x48" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x48" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x48" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x48" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x48" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x48" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y48">
+          <legend class="inner-color__title">1回に食べる量は<b>さしみ3切れ(50g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y48" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y48" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y48" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y48" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- あさり・しじみ -->
+        <fieldset class="divideUp x51">
+          <legend class="question">あさり・しじみ</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x51" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x51" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x51" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x51" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x51" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x51" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x51" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x51" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x51" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y51">
+          <legend class="inner-color__title">1回に食べる量は<b>むき身10個(20g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y51" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y51" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y51" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y51" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+
+      <div class="question-large mb16">
+        <p>つぎの野菜は<span class="underline">でまわっている季節</span>に食べる頻度と量を回答してください。</p>
+        <p>まったく食べない場合は，「月に1回未満」を選択，目安量のチェックはいりません。</p>
+      </div>
+      <div class="group">
+        <!-- イ にんじん -->
+        <fieldset class="divideUp x55">
+          <legend class="question">にんじん</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x55" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x55" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x55" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x55" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x55" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x55" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x55" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x55" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x55" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline flex y55">
+          <div class="with-photo">
+            <legend class="inner-color__title">1回に食べる量は<b>４分の１本（50g位）</b>よりも</legend>
+            <label class="hidden"><input type="radio" name="y55" value="0"><span>回答なし</span></label>
+            <label><input type="radio" name="y55" value="1"><span>少ない<small>（半分以下）</small></span></label>
+            <label><input type="radio" name="y55" value="2"><span>同じ</span></label>
+            <label><input type="radio" name="y55" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+          </div>
+          
+        </fieldset>
+
+        <!-- ロ ほうれんそう -->
+        <fieldset class="divideUp x56">
+          <legend class="question">ほうれんそう</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x56" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x56" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x56" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x56" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x56" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x56" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x56" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x56" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x56" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline flex y56">
+          <div class="with-photo">
+            <legend class="inner-color__title">1回に食べる量は<b>２株（50g位）</b>よりも</legend>
+            <label class="hidden"><input type="radio" name="y56" value="0"><span>回答なし</span></label>
+            <label><input type="radio" name="y56" value="1"><span>少ない<small>（半分以下）</small></span></label>
+            <label><input type="radio" name="y56" value="2"><span>同じ</span></label>
+            <label><input type="radio" name="y56" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+          </div>
+          
+        </fieldset>
+
+        <!-- ハ かぼちゃ -->
+        <fieldset class="divideUp x57">
+          <legend class="question">かぼちゃ</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x57" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x57" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x57" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x57" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x57" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x57" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x57" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x57" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x57" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline flex y57">
+          <div class="with-photo">
+            <legend class="inner-color__title">1回に食べる量は<b>４～５cm角切り１個（40g位）</b>よりも</legend>
+            <label class="hidden"><input type="radio" name="y57" value="0"><span>回答なし</span></label>
+            <label><input type="radio" name="y57" value="1"><span>少ない<small>（半分以下）</small></span></label>
+            <label><input type="radio" name="y57" value="2"><span>同じ</span></label>
+            <label><input type="radio" name="y57" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+          </div>
+          
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- トマト -->
+        <fieldset class="divideUp x67">
+          <legend class="question">トマト</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x67" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x67" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x67" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x67" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x67" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x67" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x67" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x67" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x67" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y67">
+          <legend class="inner-color__title">1回に食べる量は<b>4分の1個(50g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y67" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y67" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y67" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y67" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- 長ねぎ -->
+        <fieldset class="divideUp x68">
+          <legend class="question">長ねぎ</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x68" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x68" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x68" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x68" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x68" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x68" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x68" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x68" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x68" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y68">
+          <legend class="inner-color__title">1回に食べる量は<b>4分の1本(20g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y68" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y68" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y68" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y68" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- しゅんぎく -->
+        <fieldset class="divideUp x70">
+          <legend class="question">しゅんぎく</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x70" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x70" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x70" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x70" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x70" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x70" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x70" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x70" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x70" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y70">
+          <legend class="inner-color__title">1回に食べる量は<b>3分の1束(30g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y70" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y70" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y70" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y70" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+
+      <div class="group">
+        <!-- ブロッコリー -->
+        <fieldset class="divideUp x72">
+          <legend class="question">ブロッコリー</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x72" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x72" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x72" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x72" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x72" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x72" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x72" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x72" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x72" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y72">
+          <legend class="inner-color__title">1回に食べる量は<b>3房(30g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y72" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y72" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y72" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y72" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- たまねぎ -->
+        <fieldset class="divideUp x73">
+          <legend class="question">たまねぎ</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x73" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x73" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x73" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x73" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x73" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x73" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x73" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x73" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x73" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y73">
+          <legend class="inner-color__title">1回に食べる量は<b>4分の1個(50g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y73" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y73" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y73" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y73" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- はくさい -->
+        <fieldset class="divideUp x76">
+          <legend class="question">はくさい</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x76" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x76" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x76" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x76" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x76" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x76" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x76" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x76" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x76" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y76">
+          <legend class="inner-color__title">1回に食べる量は<b>中葉3分の1枚(30g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y76" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y76" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y76" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y76" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- 漬物 たくわん -->
+        <fieldset class="divideUp x60">
+          <legend class="question"><span>漬物</span>たくわん</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x60" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x60" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x60" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x60" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x60" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x60" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x60" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x60" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x60" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y60">
+          <legend class="inner-color__title">1回に食べる量は<b>3切れ(30g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y60" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y60" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y60" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y60" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+
+        <!-- 漬物 緑の葉のつけもの -->
+        <fieldset class="divideUp x61">
+          <legend class="question"><span>漬物</span>緑の葉のつけもの(野沢菜・高菜)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x61" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x61" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x61" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x61" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x61" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x61" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x61" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x61" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x61" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y61">
+          <legend class="inner-color__title">1回に食べる量は<b>漬物小皿1枚(30g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y61" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y61" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y61" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y61" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+
+        <!-- 漬物 うめぼし -->
+        <fieldset class="divideUp x62">
+          <legend class="question"><span>漬物</span>うめぼし</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x62" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x62" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x62" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x62" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x62" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x62" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x62" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x62" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x62" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y62">
+          <legend class="inner-color__title">1回に食べる量は<b>中1個(8g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y62" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y62" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y62" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y62" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+
+        <!-- 漬物 はくさい -->
+        <fieldset class="divideUp x63">
+          <legend class="question"><span>漬物</span>はくさい</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x63" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x63" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x63" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x63" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x63" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x63" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x63" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x63" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x63" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y63">
+          <legend class="inner-color__title">1回に食べる量は<b>漬物小皿1枚(30g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y63" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y63" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y63" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y63" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+
+        <!-- 漬物 きゅうり -->
+        <fieldset class="divideUp x64">
+          <legend class="question"><span>漬物</span>きゅうり</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x64" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x64" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x64" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x64" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x64" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x64" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x64" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x64" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x64" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y64">
+          <legend class="inner-color__title">1回に食べる量は<b>漬物小皿1枚(30g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y64" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y64" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y64" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y64" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+
+        <!-- 漬物 なす -->
+        <fieldset class="divideUp x65">
+          <legend class="question"><span>漬物</span>なす</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x65" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x65" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x65" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x65" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x65" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x65" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x65" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x65" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x65" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y65">
+          <legend class="inner-color__title">1回に食べる量は<b>漬物小皿1枚(30g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y65" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y65" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y65" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y65" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- みかん -->
+        <fieldset class="divideUp x88">
+          <legend class="question">みかん</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x88" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x88" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x88" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x88" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x88" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x88" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x88" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x88" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x88" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y88">
+          <legend class="inner-color__title">1回に食べる量は<b>2個(140g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y88" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y88" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y88" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y88" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- りんご -->
+        <fieldset class="divideUp x90">
+          <legend class="question">りんご</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x90" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x90" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x90" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x90" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x90" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x90" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x90" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x90" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x90" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y90">
+          <legend class="inner-color__title">1回に食べる量は<b>2分の1個(85g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y90" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y90" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y90" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y90" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- スイカ -->
+        <fieldset class="divideUp x95">
+          <legend class="question">スイカ</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x95" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x95" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x95" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x95" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x95" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x95" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x95" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x95" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x95" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y95">
+          <legend class="inner-color__title">1回に食べる量は<b>8分の1個(120g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y95" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y95" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y95" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y95" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- バナナ -->
+        <fieldset class="divideUp x100">
+          <legend class="question">バナナ</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x100" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x100" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x100" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x100" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x100" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x100" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x100" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x100" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x100" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y100">
+          <legend class="inner-color__title">1回に食べる量は<b>1本(75g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y100" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y100" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y100" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y100" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="question-large mb16">
+        <p><span class="underline">過去１年間</span>の食事を思い出して，平均的な頻度と量を回答してください。</p>
+        <p>まったく食べない場合は，「月に1回未満」を選択，目安量のチェックはいりません。</p>
+      </div>
+
+      <div class="group">
+        <!-- パン類 -->
+        <fieldset class="divideUp x102">
+          <legend class="question">パン類(菓子パンも含む)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x102" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x102" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x102" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x102" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x102" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x102" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x102" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x102" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x102" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y102">
+          <legend class="inner-color__title">1回に食べる量は<b>6枚切り1枚(60g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y102" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y102" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y102" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y102" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- うどん -->
+        <fieldset class="divideUp x103">
+          <legend class="question">うどん</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x103" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x103" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x103" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x103" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x103" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x103" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x103" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x103" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x103" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y103">
+          <legend class="inner-color__title">1回に食べる量は<b>どんぶり1杯(250g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y103" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y103" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y103" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y103" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- そば -->
+        <fieldset class="divideUp x104">
+          <legend class="question">そば</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x104" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x104" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x104" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x104" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x104" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x104" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x104" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x104" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x104" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y104">
+          <legend class="inner-color__title">1回に食べる量は<b>どんぶり1杯(200g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y104" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y104" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y104" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y104" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- 和菓子 -->
+        <fieldset class="divideUp x108">
+          <legend class="question">和菓子(だいふくまんじゅう)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x108" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x108" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x108" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x108" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x108" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x108" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x108" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x108" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x108" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y108">
+          <legend class="inner-color__title">1回に食べる量は<b>1個(70g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y108" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y108" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y108" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y108" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- とうふ(みそ汁の具) -->
+        <fieldset class="divideUp x113">
+          <legend class="question">とうふ(みそ汁の具)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x113" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x113" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x113" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x113" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x113" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x113" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x113" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x113" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x113" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y113">
+          <legend class="inner-color__title">1回に食べる量は<b>角切り5個(20g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y113" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y113" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y113" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y113" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- とうふ(湯豆腐・冷や奴など) -->
+        <fieldset class="divideUp x114">
+          <legend class="question">とうふ(湯豆腐・冷や奴など)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x114" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x114" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x114" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x114" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x114" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x114" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x114" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x114" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x114" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y114">
+          <legend class="inner-color__title">1回に食べる量は<b>4分の1丁(75g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y114" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y114" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y114" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y114" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- なっとう -->
+        <fieldset class="divideUp x119">
+          <legend class="question">なっとう</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x119" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x119" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x119" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x119" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x119" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x119" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x119" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x119" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x119" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y119">
+          <legend class="inner-color__title">1回に食べる量は<b>小1カップ(50g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y119" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y119" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y119" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y119" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- しいたけ -->
+        <fieldset class="divideUp x124">
+          <legend class="question">しいたけ</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x124" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x124" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x124" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x124" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x124" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x124" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x124" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x124" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x124" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y124">
+          <legend class="inner-color__title">1回に食べる量は<b>1枚(20g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y124" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y124" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y124" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y124" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- わかめ・こんぶ -->
+        <fieldset class="divideUp x127">
+          <legend class="question">わかめ・こんぶ</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x127" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x127" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x127" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x127" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x127" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x127" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x127" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x127" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x127" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y127">
+          <legend class="inner-color__title">1回に食べる量は<b>小鉢1杯分(20g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y127" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y127" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y127" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y127" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="group">
+        <!-- ひじき -->
+        <fieldset class="divideUp x128">
+          <legend class="question">ひじき</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x128" value="1"><span>月に１回未満</span></label>
+            <label><input type="radio" name="x128" value="2"><span>月に１～３回</span></label>
+            <label><input type="radio" name="x128" value="3"><span>週に１～２回</span></label>
+            <label><input type="radio" name="x128" value="4"><span>週に３～４回</span></label>
+            <label><input type="radio" name="x128" value="5"><span>週に５～６回</span></label>
+            <label><input type="radio" name="x128" value="6"><span>毎日１回</span></label>
+            <label><input type="radio" name="x128" value="7"><span>毎日２～３回</span></label>
+            <label><input type="radio" name="x128" value="8"><span>毎日４～６回</span></label>
+            <label><input type="radio" name="x128" value="9"><span>毎日７回以上</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="divideUp-items inner-color input-inline y128">
+          <legend class="inner-color__title">1回に食べる量は<b>小鉢1杯分(20g位)</b>よりも</legend>
+          <label class="hidden"><input type="radio" name="y128" value="0"><span>回答なし</span></label>
+          <label><input type="radio" name="y128" value="1"><span>少ない<small>（半分以下）</small></span></label>
+          <label><input type="radio" name="y128" value="2"><span>同じ</span></label>
+          <label><input type="radio" name="y128" value="3"><span>多い<small>（1.5倍以上）</small></span></label>
+        </fieldset>
+      </div>
+
+      <div class="question-large mb16">
+        <p>次の飲み物は，どのくらいの頻度で飲みますか？</p>
+        <p>飲まないものは，「週に１回未満」を選択してください。</p>
+      </div>
+
+      <div class="group">
+        <!-- 日本茶(葉からいれたもの) -->
+        <fieldset class="x138">
+          <legend class="question">日本茶(葉からいれたもの)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x138" value="1"><span>週に<br>１回未満</span></label>
+            <label><input type="radio" name="x138" value="2"><span>週に<br>１～２回</span></label>
+            <label><input type="radio" name="x138" value="3"><span>週に<br>３～４回</span></label>
+            <label><input type="radio" name="x138" value="4"><span>週に<br>５～６回</span></label>
+            <label><input type="radio" name="x138" value="5"><span>毎日<br>１杯</span></label>
+            <label><input type="radio" name="x138" value="6"><span>毎日<br>２～３杯</span></label>
+            <label><input type="radio" name="x138" value="7"><span>毎日<br>４～６杯</span></label>
+            <label><input type="radio" name="x138" value="8"><span>毎日<br>７～９杯</span></label>
+            <label><input type="radio" name="x138" value="9"><span>毎日<br><i>10</i>杯以上</span></label>
+        </div></fieldset>
+        <!-- 日本茶(缶・ペットボトル) -->
+        <fieldset class="x187">
+          <legend class="question">日本茶(缶・ペットボトル)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x187" value="1"><span>週に<br>１回未満</span></label>
+            <label><input type="radio" name="x187" value="2"><span>週に<br>１～２回</span></label>
+            <label><input type="radio" name="x187" value="3"><span>週に<br>３～４回</span></label>
+            <label><input type="radio" name="x187" value="4"><span>週に<br>５～６回</span></label>
+            <label><input type="radio" name="x187" value="5"><span>毎日<br>１杯</span></label>
+            <label><input type="radio" name="x187" value="6"><span>毎日<br>２～３杯</span></label>
+            <label><input type="radio" name="x187" value="7"><span>毎日<br>４～６杯</span></label>
+            <label><input type="radio" name="x187" value="8"><span>毎日<br>７～９杯</span></label>
+            <label><input type="radio" name="x187" value="9"><span>毎日<br><i>10</i>杯以上</span></label>
+        </div></fieldset>
+      </div>
+
+      <div class="group">
+        <!-- コーヒー(豆からいれたもの) -->
+        <fieldset class="x142">
+          <legend class="question">コーヒー(豆からいれたもの)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x142" value="1"><span>週に<br>１回未満</span></label>
+            <label><input type="radio" name="x142" value="2"><span>週に<br>１～２回</span></label>
+            <label><input type="radio" name="x142" value="3"><span>週に<br>３～４回</span></label>
+            <label><input type="radio" name="x142" value="4"><span>週に<br>５～６回</span></label>
+            <label><input type="radio" name="x142" value="5"><span>毎日<br>１杯</span></label>
+            <label><input type="radio" name="x142" value="6"><span>毎日<br>２～３杯</span></label>
+            <label><input type="radio" name="x142" value="7"><span>毎日<br>４～６杯</span></label>
+            <label><input type="radio" name="x142" value="8"><span>毎日<br>７～９杯</span></label>
+            <label><input type="radio" name="x142" value="9"><span>毎日<br><i>10</i>杯以上</span></label>
+        </div></fieldset>
+        <!-- コーヒー(インスタント) -->
+        <fieldset class="x190">
+          <legend class="question">コーヒー(インスタント)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x190" value="1"><span>週に<br>１回未満</span></label>
+            <label><input type="radio" name="x190" value="2"><span>週に<br>１～２回</span></label>
+            <label><input type="radio" name="x190" value="3"><span>週に<br>３～４回</span></label>
+            <label><input type="radio" name="x190" value="4"><span>週に<br>５～６回</span></label>
+            <label><input type="radio" name="x190" value="5"><span>毎日<br>１杯</span></label>
+            <label><input type="radio" name="x190" value="6"><span>毎日<br>２～３杯</span></label>
+            <label><input type="radio" name="x190" value="7"><span>毎日<br>４～６杯</span></label>
+            <label><input type="radio" name="x190" value="8"><span>毎日<br>７～９杯</span></label>
+            <label><input type="radio" name="x190" value="9"><span>毎日<br><i>10</i>杯以上</span></label>
+        </div></fieldset>
+        <!-- コーヒー(缶・ペットボトル) -->
+        <fieldset class="x143">
+          <legend class="question">コーヒー(缶・ペットボトル)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x143" value="1"><span>週に<br>１回未満</span></label>
+            <label><input type="radio" name="x143" value="2"><span>週に<br>１～２回</span></label>
+            <label><input type="radio" name="x143" value="3"><span>週に<br>３～４回</span></label>
+            <label><input type="radio" name="x143" value="4"><span>週に<br>５～６回</span></label>
+            <label><input type="radio" name="x143" value="5"><span>毎日<br>１杯</span></label>
+            <label><input type="radio" name="x143" value="6"><span>毎日<br>２～３杯</span></label>
+            <label><input type="radio" name="x143" value="7"><span>毎日<br>４～６杯</span></label>
+            <label><input type="radio" name="x143" value="8"><span>毎日<br>７～９杯</span></label>
+            <label><input type="radio" name="x143" value="9"><span>毎日<br><i>10</i>杯以上</span></label>
+        </div></fieldset>
+      </div>
+
+      <div class="group">
+        <!-- トマトジュース -->
+        <fieldset class="x148">
+          <legend class="question">トマトジュース</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x148" value="1"><span>週に<br>１回未満</span></label>
+            <label><input type="radio" name="x148" value="2"><span>週に<br>１～２回</span></label>
+            <label><input type="radio" name="x148" value="3"><span>週に<br>３～４回</span></label>
+            <label><input type="radio" name="x148" value="4"><span>週に<br>５～６回</span></label>
+            <label><input type="radio" name="x148" value="5"><span>毎日<br>１杯</span></label>
+            <label><input type="radio" name="x148" value="6"><span>毎日<br>２～３杯</span></label>
+            <label><input type="radio" name="x148" value="7"><span>毎日<br>４～６杯</span></label>
+            <label><input type="radio" name="x148" value="8"><span>毎日<br>７～９杯</span></label>
+            <label><input type="radio" name="x148" value="9"><span>毎日<br><i>10</i>杯以上</span></label>
+        </div></fieldset>
+      </div>
+
+      <div class="group">
+        <!-- 果汁100%オレンジジュース -->
+        <fieldset class="x146">
+          <legend class="question">果汁100%オレンジジュース</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x146" value="1"><span>週に<br>１回未満</span></label>
+            <label><input type="radio" name="x146" value="2"><span>週に<br>１～２回</span></label>
+            <label><input type="radio" name="x146" value="3"><span>週に<br>３～４回</span></label>
+            <label><input type="radio" name="x146" value="4"><span>週に<br>５～６回</span></label>
+            <label><input type="radio" name="x146" value="5"><span>毎日<br>１杯</span></label>
+            <label><input type="radio" name="x146" value="6"><span>毎日<br>２～３杯</span></label>
+            <label><input type="radio" name="x146" value="7"><span>毎日<br>４～６杯</span></label>
+            <label><input type="radio" name="x146" value="8"><span>毎日<br>７～９杯</span></label>
+            <label><input type="radio" name="x146" value="9"><span>毎日<br><i>10</i>杯以上</span></label>
+        </div></fieldset>
+      </div>
+
+      <div class="group">
+        <!-- 豆乳 -->
+        <fieldset class="x137">
+          <legend class="question">豆乳</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x137" value="1"><span>週に<br>１回未満</span></label>
+            <label><input type="radio" name="x137" value="2"><span>週に<br>１～２回</span></label>
+            <label><input type="radio" name="x137" value="3"><span>週に<br>３～４回</span></label>
+            <label><input type="radio" name="x137" value="4"><span>週に<br>５～６回</span></label>
+            <label><input type="radio" name="x137" value="5"><span>毎日<br>１杯</span></label>
+            <label><input type="radio" name="x137" value="6"><span>毎日<br>２～３杯</span></label>
+            <label><input type="radio" name="x137" value="7"><span>毎日<br>４～６杯</span></label>
+            <label><input type="radio" name="x137" value="8"><span>毎日<br>７～９杯</span></label>
+            <label><input type="radio" name="x137" value="9"><span>毎日<br><i>10</i>杯以上</span></label>
+        </div></fieldset>
+      </div>
+
+      <div class="group">
+        <!-- 飲料水(水道水・井戸水) -->
+        <fieldset class="x151">
+          <legend class="question">飲料水(水道水・井戸水)</legend>
+          <div class="input-vertical">
+            <label><input type="radio" name="x151" value="1"><span>週に<br>１回未満</span></label>
+            <label><input type="radio" name="x151" value="2"><span>週に<br>１～２回</span></label>
+            <label><input type="radio" name="x151" value="3"><span>週に<br>３～４回</span></label>
+            <label><input type="radio" name="x151" value="4"><span>週に<br>５～６回</span></label>
+            <label><input type="radio" name="x151" value="5"><span>毎日<br>１杯</span></label>
+            <label><input type="radio" name="x151" value="6"><span>毎日<br>２～３杯</span></label>
+            <label><input type="radio" name="x151" value="7"><span>毎日<br>４～６杯</span></label>
+            <label><input type="radio" name="x151" value="8"><span>毎日<br>７～９杯</span></label>
+            <label><input type="radio" name="x151" value="9"><span>毎日<br><i>10</i>杯以上</span></label>
+        </div></fieldset>
+      </div>
+
+      <div class="end">
+        これで終わりです。長い時間のご協力ありがとうございました。<br>
+        入力もれがないか，もう一度たしかめてください。
+      </div>
+      <div class="send">
+        <button class="btn">CSV保存</button>
+      </div>
+
+    </form>
+  </div>
+
+
+</body></html>
